@@ -1,0 +1,9 @@
+wheel
+six
+termcolor
+pytest
+flake8
+argparse
+pathlib
+requests
+python-dotenv

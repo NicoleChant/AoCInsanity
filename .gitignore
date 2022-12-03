@@ -1,0 +1,11 @@
+*.env
+*.envrc
+*.csv
+*/__pycache__
+*build
+*.egg-info
+.python-version
+*/rust
+*/tests
+*/garbageyard
+*/challenge_data
