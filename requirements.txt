@@ -1,4 +1,5 @@
 wheel
+six
 termcolor
 pytest
 flake8
