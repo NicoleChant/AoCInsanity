@@ -1,3 +1,4 @@
+import sys
 import os
 from dotenv import load_dotenv
 from abc import abstractmethod
@@ -19,7 +20,7 @@ class Solution():
     It will make the challenge data directories automatically for each day.
     Then you can write your solutions as subclasses of Solution class
     and access the data via the instance attribute 'self.challenge_data'
-    which is simply a f.read().
+    which is simply a f.read().strip().
 
     Import on the top of your daily solutions:
                     'from pyaoc.data_source import Solution'
@@ -46,29 +47,35 @@ class Solution():
 
         data_path = Path(__file__).resolve().parent.joinpath("challenge_data",f"day_{self.day}")
         data_path.mkdir(parents=True,exist_ok=True)
-
+        stored = True
         self.file_path = data_path / f"day_{self.day}.txt"
         if not self.file_path.is_file():
             load_dotenv()
-            if "cookie" not in os.environ.keys():
+            if "cookie" not in os.environ.keys() or not os.environ["cookie"]:
                 raise CookieNotFound()
             self.cookie = os.environ["cookie"]
 
             response = requests.request("GET",
                 f"https://adventofcode.com/2022/day/{self.day}/input",
                 headers={'Cookie': self.cookie})
-            cprint("Request: OK")
             if response.status_code == 200:
+                cprint("Request: OK","green")
                 ##store data
                 with self.file_path.open(mode="w+", encoding="utf-8") as f:
                     f.write(response.text)
                 cprint("Data succesfully stored!" , "blue" , attrs = ["bold","reverse"])
+            else:
+                cprint("Request: FAILED","red")
+                cprint("We were unable to store your data.","red")
+                stored = False
+                sys.exit(-1)
 
         ##read data
         self.challenge_data = None
-        with self.file_path.open(mode="r+" , encoding = "utf-8") as f:
-            self.challenge_data = f.read()
-        cprint(f"Data for day {self.day} succesfully read!" , "blue" , attrs = ["bold","reverse"])
+        if stored:
+            with self.file_path.open(mode="r+" , encoding = "utf-8") as f:
+                self.challenge_data = f.read().strip()
+            cprint(f"Data for day {self.day} succesfully read!" , "blue" , attrs = ["bold","reverse"])
 
     @abstractmethod
     def solve(self) -> ...:

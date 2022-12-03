@@ -1,5 +1,6 @@
 from termcolor import cprint
 import sys
+from datetime import datetime
 from pathlib import Path
 
 def display_results(day : int , part : int) -> None:
@@ -11,15 +12,17 @@ def display_results(day : int , part : int) -> None:
 
     try:
         from solution import PartI , PartII
+        sys.path.pop(0)
+        del sys.modules["solution"]
     except ModuleNotFoundError:
         raise ModuleNotFoundError(cprint("WoOooOOps! It seems your path is messed up!",
                     "red",
                     attrs=["bold","reverse"])) from None
-
+    then = datetime.now()
     solution = {1 : PartI , 2 : PartII}.get(part)(day).solve()
-    cprint(f"Printing your individual solution for AoC day I Part {part}..." , "blue" , attrs = ["bold"])
-    cprint(f"The elf 🧝 found your {solution=}! 🍪", "red" , attrs=["bold", "reverse", "blink"])
-
+    now = datetime.now()
+    cprint(f"Printing your individual solution for AoC day {day} Part {part}..." , "blue" , attrs = ["bold"])
+    cprint(f"The elf 🧝 found your {solution=} within {(now-then).total_seconds()*1000:.3f} millisecond(s)! 🍪", "red" , attrs=["bold", "reverse", "blink"])
 
 
 if __name__ == "__main__":
