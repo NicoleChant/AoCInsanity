@@ -37,17 +37,11 @@ class Solution():
     challenge_data : str = field(init = False , default = None)
 
     def __post_init__(self) -> None:
-        load_dotenv()
-        if "cookie" not in os.environ.keys():
-            raise CookieNotFound()
-
-        self.cookie = os.environ["cookie"]
-
         ##hacky day resolution
         if self.day is None:
             hacky_resolution = Path.cwd().parts[-1]
             if not hacky_resolution.startswith("day") or not hacky_resolution[-1].isdigit():
-                raise ValueError("Unable Resolve Day of Competition.")
+                raise ValueError("Unable to Resolve the Day of Competition.")
             self.day = hacky_resolution[-1]
 
         data_path = Path(__file__).resolve().parent.joinpath("challenge_data",f"day_{self.day}")
@@ -55,6 +49,11 @@ class Solution():
 
         self.file_path = data_path / f"day_{self.day}.txt"
         if not self.file_path.is_file():
+            load_dotenv()
+            if "cookie" not in os.environ.keys():
+                raise CookieNotFound()
+            self.cookie = os.environ["cookie"]
+
             response = requests.request("GET",
                 f"https://adventofcode.com/2022/day/{self.day}/input",
                 headers={'Cookie': self.cookie})
