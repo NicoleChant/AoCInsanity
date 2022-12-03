@@ -7,4 +7,5 @@
 .python-version
 */rust
 */tests
-*/pyaoc/garbageyard
+*/garbageyard
+*/challenge_data
