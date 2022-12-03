@@ -1,6 +1,5 @@
 *.env
 *.envrc
-*.txt
 *.csv
 */__pycache__
 *build
