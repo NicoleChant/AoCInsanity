@@ -10,10 +10,23 @@ class PartI(Solution):
 class PartII(Solution):
 
    def solve(self):
-        pass
+        idx = 0
+        total = 0
+        temp = set()
+        for d in self.challenge_data.strip().split("\n"):
+            if idx%3==0:
+                temp = set(d)
+            else:
+                temp = temp.intersection(d)
+
+            if len(temp) == 1:
+                x = list(set(temp))[0]
+                total += ord(x) - 96 if ord(x) > 96 else ord(x) - 38
+            idx += 1
+        return total
 
 
 
-if __name__=="__main__":
-    solution=PartI().solve()
+if __name__ == "__main__":
+    solution=PartII().solve()
     print(solution)
