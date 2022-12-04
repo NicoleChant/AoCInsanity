@@ -33,6 +33,7 @@ class Solution():
     """
 
     day : int = field(default = None)
+    year : int = field(default = 2022)
     cookie : str = field(init = False , repr = False , default = None)
     file_path : PosixPath = field(init = False , repr = False)
     challenge_data : str = field(init = False , default = None)
@@ -47,7 +48,7 @@ class Solution():
 
         data_path = Path(__file__).resolve().parent.joinpath("challenge_data",f"day_{self.day}")
         data_path.mkdir(parents=True,exist_ok=True)
-        stored = True
+
         self.file_path = data_path / f"day_{self.day}.txt"
         if not self.file_path.is_file():
             load_dotenv()
@@ -56,7 +57,7 @@ class Solution():
             self.cookie = os.environ["cookie"]
 
             response = requests.request("GET",
-                f"https://adventofcode.com/2022/day/{self.day}/input",
+                f"https://adventofcode.com/{self.year}/day/{self.day}/input",
                 headers={'Cookie': self.cookie})
             if response.status_code == 200:
                 cprint("Request: OK","green")
@@ -72,10 +73,9 @@ class Solution():
 
         ##read data
         self.challenge_data = None
-        if stored:
-            with self.file_path.open(mode="r+" , encoding = "utf-8") as f:
-                self.challenge_data = f.read().strip()
-            cprint(f"Data for day {self.day} succesfully read!" , "blue" , attrs = ["bold","reverse"])
+        with self.file_path.open(mode="r+" , encoding = "utf-8") as f:
+            self.challenge_data = f.read().strip()
+        cprint(f"Data for day {self.day} succesfully read!" , "blue" , attrs = ["bold","reverse"])
 
     @abstractmethod
     def solve(self) -> ...:
