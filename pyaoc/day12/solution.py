@@ -5,7 +5,7 @@ class PartI(Solution):
     def find_starting_position(self):
         for i in range(len(self.maze)):
             for j in range(len(self.maze[0])):
-                if self.maze[i][j] == "S":
+                if self.maze[i][j] == ord("a")-1:
                     return i , j
 
     def print_maze(self):
@@ -32,7 +32,7 @@ class PartI(Solution):
 
     def backtrack_path(self , parents , start , last_node):
         path = [last_node]
-        while path[-1]!=start:
+        while path[-1] != start:
             path.append(parents[path[-1]])
         return path[::-1]
 
@@ -41,8 +41,10 @@ class PartI(Solution):
             f.write("\n".join("".join(row) for row in self.maze))
 
     def solve(self):
-        self.maze = [list(row) for row in self.challenge_data.splitlines()]
-        #self.print_maze()
+        self.maze = [list(row) for row in open("../challenge_data/day_12/day_12.txt").read().splitlines()]
+        self.maze = [[ord(el) if el not in ["S","E"] else (ord("z") + 1 if el =="E" else ord("a")-1) for el in row] for row in self.maze]
+        self.print_maze()
+
         parents = {}
         path = None
         start = self.find_starting_position()
@@ -51,7 +53,7 @@ class PartI(Solution):
 
         while len(queue) > 0:
             cur_pos = queue.pop(0)
-            if self.maze[cur_pos[0]][cur_pos[1]] == "E":
+            if self.maze[cur_pos[0]][cur_pos[1]] == ord("z")+1:
                 path = cur_pos
                 break
 
@@ -63,12 +65,15 @@ class PartI(Solution):
                     cur_elevation = self.maze[cur_pos[0]][cur_pos[1]]
 
                     ##stupid... i got 0 nodes.. need to change S --> elevation a
-                    if cur_elevation == "S":
-                        cur_elevation = "a"
+                    # if cur_elevation == "S":
+                    #     cur_elevation = "a"
+
+                    # if cur_elevation == "E":
+                    #     cur_elevation = "z"
 
                     #check elevation ..... YAY! pro climber
                     ##skip if you dont have the right elevation!!!
-                    if ord(cur_elevation) + 1 < ord(next_elevation):
+                    if next_elevation > cur_elevation + 1:
                         continue
 
                     next_pos = next_i , next_j
@@ -78,7 +83,6 @@ class PartI(Solution):
                         queue.append(next_pos)
 
         full_path = self.backtrack_path(parents , start , path)
-        print(full_path)
 
         ##visualization of the path
 
